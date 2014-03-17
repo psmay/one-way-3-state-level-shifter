@@ -1,5 +1,7 @@
 One-way 3-state level shifter
------------------------------
+=============================
+
+![Schematic](schematic.png)
 
 This is a design for a DIP breakout for a MOSFET-based unidirectional
 level shifter with non-trivial output current capacity. It consists of a
@@ -10,6 +12,8 @@ the PMOS to be switched by a logic-level voltage, an additional NMOS
 
 The threshold voltages of the NMOSes determine the input logic high;
 there is no pin corresponding to `Vdd` for the input side.
+
+![Layout](layout.png)
 
 The layout is substantively single-sided; the far side of the board is
 just a ground fill and can be omitted.
@@ -31,8 +35,8 @@ just a ground fill and can be omitted.
     resistor (such as 100Ω).
 *   The `SW_HIGH` and `SW_LOW` inputs are kept separate and
     independently control the high-side and low-side switches.
-    *   When both inputs are both low, the (intended) output is hi-Z
-        (high impedance).
+    *   When both inputs are low, the (intended) output is hi-Z (high
+        impedance).
     *   Avoid setting both inputs high at once; this causes a
         "shoot-through" condition, basically a short circuit. The
         PTC-ness of the MOSFETs may mitigate this somewhat, but it has

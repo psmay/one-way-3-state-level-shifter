@@ -1,22 +1,53 @@
 
 PROJECT=one-way-3-state-level-shifter
-SCHEMATIC_PDF=schematic.pdf
-LAYOUT_PDF=layout.pdf
+SCHEMATIC_X=schematic
+LAYOUT_X=layout
+BUILD=build
+PDF_PRODUCTS = $(SCHEMATIC_X).pdf $(LAYOUT_X).pdf
+PNG_PRODUCTS = $(SCHEMATIC_X).png $(LAYOUT_X).png
+DISPLAY_PRODUCTS = $(PNG_PRODUCTS)
 
-default: schematic-pdf layout-pdf
+default: $(DISPLAY_PRODUCTS)
+
+$(BUILD):
+	mkdir -p build
+
+distclean: clean
+	rm -vf $(DISPLAY_PRODUCTS)
 
 clean:
-	rm -f .tmp.* *.ps *.pdf *.net *.pcb- *.sch~
+	rm -rvf $(BUILD)
 
-schematic-pdf: $(SCHEMATIC_PDF)
+$(SCHEMATIC_X).pdf: $(BUILD)/schematic.pdf
+	cp $^ $@
 
-$(SCHEMATIC_PDF): $(PROJECT).sch
+$(LAYOUT_X).pdf: $(BUILD)/layout.pdf
+	cp $^ $@
+
+$(SCHEMATIC_X).png: $(BUILD)/schematic.png
+	cp $^ $@
+
+$(LAYOUT_X).png: $(BUILD)/layout.png
+	cp $^ $@
+
+
+
+
+$(BUILD)/schematic.pdf: $(PROJECT).sch | $(BUILD)
 	gaf export -o $@ $^
 
-layout-pdf: $(LAYOUT_PDF)
+$(BUILD)/schematic.png: $(BUILD)/schematic.pdf | $(BUILD)
+	convert -density 200x200 $^ -scale 40% $@
 
-$(LAYOUT_PDF): $(PROJECT).pcb
-	pcb -x ps --psfile $$-layout.tmp.ps $^
-	ps2pdf $$-layout.tmp.ps $@
-	rm -f $$-layout.tmp.ps
+$(BUILD)/layout.ps: $(PROJECT).pcb | $(BUILD)
+	pcb -x ps --psfile $@ $^
+
+$(BUILD)/layout.pdf: $(BUILD)/layout.ps | $(BUILD)
+	ps2pdf $^ $@
+
+$(BUILD)/layout.eps: $(PROJECT).pcb | $(BUILD)
+	pcb -x eps --eps-file $@ $^
+
+$(BUILD)/layout.png: $(BUILD)/layout.eps | $(BUILD)
+	convert -density 600x600 $^ -background white -flatten $@
 
