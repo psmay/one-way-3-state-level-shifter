@@ -4,14 +4,30 @@ One-way 3-state level shifter
 ![Schematic](schematic.png)
 
 This is a design for a DIP breakout for a MOSFET-based unidirectional
-level shifter with non-trivial output current capacity. It consists of a
-complementary pair of MOSFETs in a single TSOP6 package, with the PMOS
-and NMOS acting as high- and low-side switches, respectively. To allow
-the PMOS to be switched by a logic-level voltage, an additional NMOS
-(also TSOP6) and a 100KΩ pull-up (0603) are included at its input.
+level shifter with non-trivial output current capacity and low impedance
+either sourcing or sinking. (This is possibly at a minor cost of some
+speed and/or power consumption; other level shifters exist that are
+probably a better fit if low current or high and/or asymmetrical
+impedance isn't an issue.)
+
+It consists of a complementary pair of MOSFETs in a single TSOP6
+package, with the PMOS and NMOS acting as high- and low-side switches,
+respectively. To allow the PMOS to be switched by a logic-level voltage,
+an additional NMOS (also TSOP6) and a pull-up resistor (0603) are
+included at its input.
 
 The threshold voltages of the NMOSes determine the input logic high;
 there is no pin corresponding to `Vdd` for the input side.
+
+The nominal 100KΩ value for the pull-up reflects the switched voltage
+for the original intended application, which is somewhere between 10V
+and 20V. A smaller pull-up, such as 10KΩ, should be used if the voltage
+is smaller (e.g. less than 10V). The tradeoff is speed versus power
+usage: The high-side switch will take longer to shut off if the
+resistance is higher; if it is lower, more current will be passed
+through the pull-up when the high-side switch is on. If the application
+circuit will be working with a variable voltage, consider how power
+usage and timing are affected at the extremes.
 
 ![Layout](layout.png)
 
